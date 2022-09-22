@@ -1,0 +1,13 @@
+a=int(input())
+b=int(input())
+c=int(input())
+d=[]
+d.append(a)
+d.append(b)
+d.append(c)
+sum_d=sum(d)
+max_d=max(d)
+min_d=min(d)
+print(sum_d)
+print(max_d)
+print(min_d)
