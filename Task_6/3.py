@@ -1,16 +1,16 @@
 a = {}
-NP = list()
+b = list()
 while True:
-    track = input('Трек: ')
-    if track == 'off':
+    t = input('Трек: ')
+    if t == 'off':
         break
-    name = input('Имя: ')
-    if name == 'off':
+    n = input('Имя: ')
+    if n == 'off':
         break
-    NP.append(name)
+    b.append(n)
     plase = input('Место: ')
     if plase == 'off':
         break
-    NP.append(plase)
-    a[tuple(NP)] = track
+    b.append(plase)
+    a[tuple(b)] = t
 print(a)
