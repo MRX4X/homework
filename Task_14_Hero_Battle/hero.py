@@ -2,7 +2,7 @@ from time import *
 from random import *
 class Game():
     def privet(self):
-        return ('Привет в игре Игра престолов')
+        return ('Привет! Ты зашел в игру "Бродилка". Следуй инструкциям во время игры.')
     def Location(self):
         print('Выбери одну из 3 возможных локаций: Красная поляна, Солнечная долина, Роза хутор')
         loc=input()
@@ -20,8 +20,12 @@ class Game():
 class Fight_1():
     def razboi(self):
         global mon
-        mon = 100
-        print('Вы встретили перед собой разбойников\nОни требуют откуп в размере 50 монет, у вас есть', mon, 'монет, иначе вам придется сражаться\nВыбирайте: ОТКУП или СРАЖЕНИЕ')
+        mon=100
+        print('Вы встретили перед собой разбойника')
+        sleep(1)
+        print('Он требует откуп в размере 50 монет, у вас есть', mon, 'монет, иначе вам придется сражаться')
+        sleep(1)
+        print('Выбирайте: ОТКУП или СРАЖЕНИЕ')
         raz=input()
         if raz=='Откуп':
             raz_ploh=mon/2
@@ -35,10 +39,10 @@ class Fight_1():
             while True:
                 hit = int(input())
                 if hit == 1:
-                    b = randint(20, 60)
+                    b = randint(20, 40)
                     raz_1 -= b
                     print('У разбойника осталось', raz_1)
-                    c = randint(1, 4)
+                    c = randint(20, 40)
                     vi -= c
                     print('У вас осталось', vi)
                 if hit == 2:
@@ -50,6 +54,60 @@ class Fight_1():
                 if raz_1 <= 0:
                     print('Вы выйграли')
                     break
+
+class Fight_2():
+    def razboi_1(self):
+        print('Вы встретили другого пользователя.\nВступите с ним в бой.')
+        sleep(1)
+        vi = 100
+        prot = 100
+        print('У вас hp -', vi, 'У соперника -', prot)
+        sleep(1)
+        print('Выберите 1 для удара ИЛИ 2 для хила')
+        while True:
+            #первый игрок
+            print('Аттакует 1 игрок')
+            print('ХП 1 игрока ', vi)
+            hit_1 = int(input())
+            if hit_1 == 1:
+                b = randint(20, 40)
+                prot -= b
+                print('У врага', prot)
+            if hit_1 == 2:
+                vi += randint(10, 30)
+                print('Ваше хп', vi)
+            #второй игрок
+            print('Аттакует 2 игрок')
+            print('ХП 2 игрока ', prot)
+            hit_2 = int(input())
+            if hit_2 == 1:
+                b = randint(20, 40)
+                vi -= b
+                print('У врага', vi)
+            if hit_2 == 2:
+                prot += randint(10, 30)
+                print('Ваше хп', prot)
+            if vi <= 0:
+                print('1 игрок проиграл')
+                break
+            if prot <= 0:
+                print('2 игрок проиграл')
+                break
+
+class Day():
+    def Sleep(self):
+        print('День подходит к концу\nВашему герою нужен обязательный сон')
+        sleep(1)
+        print('Спит.....')
+        sleep(1)
+        print('Спит....')
+        sleep(1)
+        print('Доброе утро! Начало новых приключений!')
+        sleep(1)
+        print('Новый день!')
+
+
+
 f1=Game()
 print(f1.privet())
 print(f1.Location())
@@ -58,5 +116,17 @@ print(f1.Time())
 sleep(2)
 
 f2=Fight_1()
-print(f2.razboi())
+f2.razboi()
 
+sleep(2)
+
+f3=Day()
+f3.Sleep()
+
+print(f1.Location())
+print(f1.Time())
+
+sleep(2)
+
+f4=Fight_2()
+f4.razboi_1()
