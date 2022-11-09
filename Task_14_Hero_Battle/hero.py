@@ -106,6 +106,10 @@ class Day():
         sleep(1)
         print('Новый день!')
 
+class The_end():
+    def Con(self):
+        print('Поздравляем!!! Вы победили всех врагов и прошли игру')
+
 
 
 f1=Game()
@@ -130,3 +134,8 @@ sleep(2)
 
 f4=Fight_2()
 f4.razboi_1()
+
+sleep(2)
+
+f5=The_end()
+f5.Con()
