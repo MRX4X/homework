@@ -64,6 +64,8 @@ class Fight_2():
         print('У вас hp -', vi, 'У соперника -', prot)
         sleep(1)
         print('Выберите 1 для удара ИЛИ 2 для хила')
+        count_1=0
+        count_2=0
         while True:
             #первый игрок
             print('Аттакует 1 игрок')
@@ -73,9 +75,13 @@ class Fight_2():
                 b = randint(20, 40)
                 prot -= b
                 print('У врага', prot)
-            if hit_1 == 2:
-                vi += randint(10, 30)
-                print('Ваше хп', vi)
+            if count_1<=3:
+                if hit_1 == 2:
+                    vi += randint(10, 30)
+                    print('Ваше хп', vi)
+                    count_1+=1
+            else:
+                print('Максимальное количество хилок - 3')
             #второй игрок
             print('Аттакует 2 игрок')
             print('ХП 2 игрока ', prot)
@@ -84,14 +90,22 @@ class Fight_2():
                 b = randint(20, 40)
                 vi -= b
                 print('У врага', vi)
-            if hit_2 == 2:
-                prot += randint(10, 30)
-                print('Ваше хп', prot)
+            if count_2<=3:
+                if hit_2 == 2:
+                    prot += randint(10, 30)
+                    print('Ваше хп', prot)
+                    count_2+=1
+            else:
+                print('Максимальное количество хилок - 3')
             if vi <= 0:
                 print('1 игрок проиграл')
+                sleep(1)
+                print('Поздравляем!!! Вы победили всех врагов и прошли игру')
                 break
             if prot <= 0:
                 print('2 игрок проиграл')
+                sleep(1)
+                print('Вы погибли')
                 break
 
 class Day():
@@ -105,12 +119,6 @@ class Day():
         print('Доброе утро! Начало новых приключений!')
         sleep(1)
         print('Новый день!')
-
-class The_end():
-    def Con(self):
-        print('Поздравляем!!! Вы победили всех врагов и прошли игру')
-
-
 
 f1=Game()
 print(f1.privet())
@@ -127,15 +135,7 @@ sleep(2)
 f3=Day()
 f3.Sleep()
 
-print(f1.Location())
-print(f1.Time())
-
 sleep(2)
 
 f4=Fight_2()
 f4.razboi_1()
-
-sleep(2)
-
-f5=The_end()
-f5.Con()
