@@ -554,5 +554,6 @@ c1.Traktir()
 c1.Gargylia()
 c1.Traktir()
 c1.Prisrak()
+c1.The_end()
 
 
