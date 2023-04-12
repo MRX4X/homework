@@ -15,14 +15,12 @@ th.start()
 
 while True:
     text = input()
-    print('dddd')
     dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     sock.send(bytes(text, encoding='UTF-8'))
-    print('sss')
 
 
 
-
+#Добавление базы данных в программный код
 # import psycopg2
 #
 # conn = psycopg2.connect(dbname='postgres', user='denis', password='7278', host='localhost')
