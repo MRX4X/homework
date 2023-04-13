@@ -30,31 +30,41 @@ def autorisation(conn):
         if message_user=='1':
             conn.send('Введите логин и пароль для регистрации'.encode())
             conn.send('Введите логин'.encode())
-            user_mas=[]
-            login_user= conn.recv(1024).decode()
-            user_mas.append(login_user)
+            user_mas_reg=[]
+            login_user_reg= conn.recv(1024).decode()
+            user_mas_reg.append(login_user_reg)
             conn.send('Введите пароль'.encode())
-            pass_user = conn.recv(1024).decode()
-            user_mas.append(pass_user)
-            print(user_mas)
+            pass_user_reg = conn.recv(1024).decode()
+            user_mas_reg.append(pass_user_reg)
+            print(user_mas_reg)
             insert_query = """ INSERT INTO user_for_chat (login_user, pass_user)
                                           VALUES (%s, %s)"""
-            item_tuple = (user_mas[0], user_mas[1])
+            item_tuple = (user_mas_reg[0], user_mas_reg[1])
             cur.execute(insert_query, item_tuple)
             conn_bd_user.commit()
             print("1 элемент (строка) успешно добавлен")
-            cur.execute("SELECT login_user, pass_user from user_for_chat where login_user = %s", [login_user])
+            conn.send('Вы успешно зарегистрировались, повторите ввод логина и пароля для входа'.encode())
+
+            conn.send('Введите логин'.encode())
+            user_mas_vxod = []
+            login_user_vxod = conn.recv(1024).decode()
+            user_mas_vxod.append(login_user_vxod)
+            conn.send('Введите пароль'.encode())
+            pass_user_vxod = conn.recv(1024).decode()
+            user_mas_vxod.append(pass_user_vxod)
+            print(user_mas_vxod)
+            cur.execute("SELECT login_user, pass_user from user_for_chat where login_user = %s", [login_user_vxod])
             purchase_user = cur.fetchone()
             conn_bd_user.commit()
 
-            if user_mas[0]==purchase_user[0] and user_mas[1]==purchase_user[1]:
-                conn.send('Вы успешно зарегистрировались, подключение осуществленно'.encode())
+            if user_mas_vxod[0]==purchase_user[0] and user_mas_vxod[1]==purchase_user[1]:
+                conn.send('Вы успешно вошли, подключение к чату осуществленно'.encode())
                 break
             else:
-                conn.send('Логин должен быть уникальным, регистрация не возможна, перезагрузите клиент'.encode())
+                conn.send('Вы не правильно ввели логин или пароль, перезагрузите клиент'.encode())
 
         if message_user=='2':
-            conn.send('Введите логин и пароль для регистрации'.encode())
+            conn.send('Введите логин и пароль для входа'.encode())
             conn.send('Введите логин'.encode())
             user_mas = []
             login_user = conn.recv(1024).decode()
