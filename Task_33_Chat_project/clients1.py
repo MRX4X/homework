@@ -1,31 +1,14 @@
-# import socket
-# from threading import Thread
-# from datetime import datetime
-#
-# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# sock.connect(('localhost', 55000))
-#
-# def accept():
-#     while True:
-#         data = sock.recv(1024)
-#         print(data.decode())
-#
-# th = Thread(target=accept)
-# th.start()
-#
-# while True:
-#     text = input()
-#     dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-#     sock.send(bytes(text, encoding='UTF-8'))
 from time import sleep
+from datetime import datetime
 import socket
 from threading import Thread
 from PyQt5 import QtWidgets, QtGui, QtCore
 import sys
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#Создание сокета. Работающим с ip адресами версии 4, по протоколу TCP,
 sock.connect(('localhost', 55000))
-
+name_user=None
 class Login(QtWidgets.QWidget):
     switch_window = QtCore.pyqtSignal()
 
@@ -49,19 +32,26 @@ class Login(QtWidgets.QWidget):
 
     def login(self):
         #тут надо цикл и брейкать после успеха, а в случае не успеха повторять
-        login, password, ok = self.show_login_dialog()
-        print(login,password,ok)
-        if ok:
-            sock.send(bytes("2", encoding='UTF-8'))
-            sock.send(bytes(login, encoding='UTF-8'))
-            sleep(1)
-            sock.send(bytes(password, encoding='UTF-8'))
-            register_chek = sock.recv(1024).decode()
-            print(register_chek)
-            if register_chek=="True":
-                self.chat_window = ChatWindow()
-                self.chat_window.show()
-                self.close()
+        while True:
+            login, password, ok = self.show_login_dialog()
+            print(login,password,ok)
+            if ok:
+                sock.send(bytes("2", encoding='UTF-8'))
+                sleep(1)
+                sock.send(bytes(login, encoding='UTF-8'))
+                sleep(1)
+                sock.send(bytes(password, encoding='UTF-8'))
+                register_chek = sock.recv(1024).decode()
+                print(register_chek)
+                if register_chek=="True":
+                    global name_user
+                    name_user=login
+                    self.chat_window = ChatWindow()
+                    self.chat_window.show()
+                    self.close()
+                    break
+                else:
+                    pass #не корректный пароль или логин, должно в графическом интерфейсе должно появляться сообщение об ошибке
 
     def register(self):
         login, password, ok = self.show_login_dialog()
@@ -73,8 +63,9 @@ class Login(QtWidgets.QWidget):
             sock.send(bytes(password, encoding='UTF-8'))
             register_chek=sock.recv(1024).decode()
             if register_chek=="True":
-                self.chat_window = ChatWindow()
-                self.chat_window.show()
+                # self.chat_window = ChatWindow()
+                # self.chat_window.show()
+                self.login()
                 self.close()
 
     def show_login_dialog(self):
@@ -152,10 +143,10 @@ class ChatWindow(QtWidgets.QWidget):
 
         self.layout = QtWidgets.QVBoxLayout()
 
-        self.message_box = QtWidgets.QTextEdit() #виджет для отображения сообщений
+        self.message_box = QtWidgets.QTextBrowser() #виджет для отображения сообщений
         self.message_box.setReadOnly(True)
-        # th = Thread(target=self.reciever,daemon=True)
-        # th.start()
+        th = Thread(target=self.reciever,daemon=True)
+        th.start()
         self.input_box = QtWidgets.QLineEdit() #виджет для ввода новых сообщений
         self.send_button = QtWidgets.QPushButton('Отправить')
         self.send_button.clicked.connect(self.send_message)
@@ -166,15 +157,22 @@ class ChatWindow(QtWidgets.QWidget):
 
         self.setLayout(self.layout)
 
+        # self.reciever()
+
     def send_message(self):
         # Код отправки сообщения
-        sock.send(self.input_box.text().encode())
+        dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        sock.send((dt+' '+name_user + ':' + self.input_box.text()).encode())
         # pass
     def reciever(self):
         # pass
+        print('rec')
         while True:
             text = sock.recv(1024).decode()
-            self.message_box.setText(text)
+            print(text)
+            self.input_box.clear()
+            self.message_box.append(text)
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     login_window = Login()
@@ -230,10 +228,3 @@ def handle_send_message_button(self):
     message = self.chat_input.text()
     # здесь должна быть логика отправки сообщения на сервер и отображения его в чате
     self.chat_input.setText('')
-
-
-#Добавление базы данных в программный код
-# import psycopg2
-#
-# conn = psycopg2.connect(dbname='postgres', user='denis', password='7278', host='localhost')
-# cursor = conn.cursor()

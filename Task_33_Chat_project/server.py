@@ -15,18 +15,21 @@ clients = set() #Множество сокетов для подключения
 def connection(soc_cl):
     while True:
         print('Начало соединения, функция connection')
-        massage = soc_cl.recv(1024)
+        message = soc_cl.recv(1024)
         global clients
+        if not(message):
+            continue
         print('Перед циклом функция connection')
         for i in clients:
-            i.send(massage)
-            print(massage)
+            i.send(message)
+            print(message)
             print('Отправка после каждого сообщения')
 
 def autorisation(conn):
     while True:
         message_user=conn.recv(1024).decode()
-        print('Начало регистрации, перед выбором регистрации или входа')
+        print(message_user)
+        # print('Начало регистрации, перед выбором регистрации или входа')
         if message_user=='1':
             user_mas_reg=[]
             login_user_reg= conn.recv(1024).decode()
@@ -43,6 +46,7 @@ def autorisation(conn):
             conn_bd_user.commit()
             print("1 элемент (строка) успешно добавлен")
             conn.send('True'.encode())
+            continue
             # conn.send('Вы успешно зарегистрировались, повторите ввод логина и пароля для входа'.encode())
 
             # conn.send('Введите логин'.encode())
@@ -79,6 +83,8 @@ def autorisation(conn):
             if user_mas[0]==purchase_user[0] and user_mas[1]==purchase_user[1]:
                 # conn.send('Логин и пароль введен верно, подключение осуществленно').encode()
                 conn.send('True'.encode())
+                th1 = Thread(target=connection, args=(conn,), daemon=True)
+                th1.start()
                 break
             else:
                 conn.send('Вы не правильно ввели логин или пароль, перезагрузите клиент'.encode())
@@ -90,9 +96,7 @@ while True:
     clients.add(conn)
     autorisation(conn)
     print('После регистрации, перед созданием потока с сообщениями, в котором функция отправки сообщений клиентам')
-    if conn:
-        th1 = Thread(target=connection, args=(conn,), daemon=True)
-        th1.start()
+
 
 
 
