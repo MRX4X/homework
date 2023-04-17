@@ -6,9 +6,11 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 import sys
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#Создание сокета. Работающим с ip адресами версии 4, по протоколу TCP,
+#Создание сокета с двухсторонней связью, работающим с ip адресами версии 4, по протоколу TCP,
 sock.connect(('localhost', 55000))
+#Подключение к серверу, по порту 550000
 name_user=None
+#Глобальная переменная имени клиента
 class Login(QtWidgets.QWidget):
     switch_window = QtCore.pyqtSignal()
 
@@ -21,6 +23,8 @@ class Login(QtWidgets.QWidget):
         self.login_button = QtWidgets.QPushButton('Вход')
         self.register_button = QtWidgets.QPushButton('Регистрация')
 
+        # self.setMinimumSize(800, 600)
+        # self.setMaximumSize(1200, 900)
         self.login_button.clicked.connect(self.login)
         self.register_button.clicked.connect(self.register)
 
@@ -31,37 +35,48 @@ class Login(QtWidgets.QWidget):
         self.setLayout(layout)
 
     def login(self):
+        #Функция авторизации клиента
         #тут надо цикл и брейкать после успеха, а в случае не успеха повторять
         while True:
             login, password, ok = self.show_login_dialog()
             print(login,password,ok)
             if ok:
                 sock.send(bytes("2", encoding='UTF-8'))
+                #Передаем на сервер сообщение вызывающее условие для входа клиента
                 sleep(1)
                 sock.send(bytes(login, encoding='UTF-8'))
+                #Отправляем логин клиента на сервер
                 sleep(1)
                 sock.send(bytes(password, encoding='UTF-8'))
+                #Отправляем пароль на сервер
                 register_chek = sock.recv(1024).decode()
+                #Значение возвращаемое сервером, True - при успешной авторизации, False - при не успешной, и цикл начнет работу занова и авторизацию нудно будет пройти повторно
                 print(register_chek)
                 if register_chek=="True":
                     global name_user
                     name_user=login
+                    #В качестве имени отправителя будет использоваться логин клиента
                     self.chat_window = ChatWindow()
                     self.chat_window.show()
+                    # self.statusbar.showMessage('Вход выполнен успешно')
                     self.close()
                     break
                 else:
                     pass #не корректный пароль или логин, должно в графическом интерфейсе должно появляться сообщение об ошибке
 
     def register(self):
+        # Функция добавления (регистрации) нового аккаунта в базу данных
         login, password, ok = self.show_login_dialog()
         if ok:
-            # Код добавления нового аккаунта в базу данных
             sock.send(bytes("1", encoding='UTF-8'))
+            # Передаем на сервер сообщение вызывающее условие для регистрации клиента
             sock.send(bytes(login, encoding='UTF-8'))
+            # Отправляем логин клиента на сервер
             sleep(1)
             sock.send(bytes(password, encoding='UTF-8'))
+            # Отправляем пароль на сервер
             register_chek=sock.recv(1024).decode()
+            # Значение возвращаемое сервером, True - при успешной регистрации.
             if register_chek=="True":
                 # self.chat_window = ChatWindow()
                 # self.chat_window.show()
@@ -147,6 +162,7 @@ class ChatWindow(QtWidgets.QWidget):
         self.message_box.setReadOnly(True)
         th = Thread(target=self.reciever,daemon=True)
         th.start()
+        #Создаем отдельный поток для принятия сообщений постоянно работющий отдельно от основного потока, пока не завершиться сама программа
         self.input_box = QtWidgets.QLineEdit() #виджет для ввода новых сообщений
         self.send_button = QtWidgets.QPushButton('Отправить')
         self.send_button.clicked.connect(self.send_message)
@@ -157,21 +173,25 @@ class ChatWindow(QtWidgets.QWidget):
 
         self.setLayout(self.layout)
 
-        # self.reciever()
 
     def send_message(self):
-        # Код отправки сообщения
+        # Функция отправки сообщений на сервер
         dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # Переменная хранящая занчений сегодняшней даты и времени
         sock.send((dt+' '+name_user + ':' + self.input_box.text()).encode())
-        # pass
+        # Отправка сообщения а сервер: текущая дата, имя клиента из глобальной переменной, введенное сообщение в поле ввода в графическом интерфейсе
+
     def reciever(self):
-        # pass
-        print('rec')
+        # Функция принятия сообщений, запущенная в отдельном потоке
         while True:
+            #Постоянно работающий цикл для принятия сообщений
             text = sock.recv(1024).decode()
+            #Принимаем сообщения от сервера
             print(text)
             self.input_box.clear()
+            #Очищаем строку ввода сообщений клиента, чтобы после отправки удобно было вводить новое сообщение
             self.message_box.append(text)
+            #Передаем текст от сервера в графический интерфейс отображения сообщений клиента
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
