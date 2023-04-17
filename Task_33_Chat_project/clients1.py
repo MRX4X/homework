@@ -161,6 +161,8 @@ class ChatWindow(QtWidgets.QWidget):
         self.layout = QtWidgets.QVBoxLayout()
         self.setMinimumSize(800, 600)
         self.setMaximumSize(1200, 900)
+        self.list_users_hight = QtWidgets.QLabel('Участники переписки')
+        self.list_users = QtWidgets.QLabel()
         self.message_box = QtWidgets.QTextBrowser() #виджет для отображения сообщений
         self.message_box.setReadOnly(True)
         th = Thread(target=self.reciever,daemon=True)
@@ -169,7 +171,7 @@ class ChatWindow(QtWidgets.QWidget):
         self.input_box = QtWidgets.QLineEdit() #виджет для ввода новых сообщений
         self.send_button = QtWidgets.QPushButton('Отправить')
         self.send_button.clicked.connect(self.send_message)
-
+        self.layout.addWidget(self.list_users)
         self.layout.addWidget(self.message_box)
         self.layout.addWidget(self.input_box)
         self.layout.addWidget(self.send_button)
@@ -181,7 +183,7 @@ class ChatWindow(QtWidgets.QWidget):
         # Функция отправки сообщений на сервер
         dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         # Переменная хранящая занчений сегодняшней даты и времени
-        sock.send((dt+' '+name_user + ':' + self.input_box.text()).encode())
+        sock.send((dt+' ' + '|' + name_user + '|' + ' ' + self.input_box.text()).encode())
         # Отправка сообщения а сервер: текущая дата, имя клиента из глобальной переменной, введенное сообщение в поле ввода в графическом интерфейсе
 
     def reciever(self):
@@ -192,8 +194,12 @@ class ChatWindow(QtWidgets.QWidget):
             #Принимаем сообщения от сервера
             print(text)
             self.input_box.clear()
+            new_text = text.split("!")
+            print(new_text)
             #Очищаем строку ввода сообщений клиента, чтобы после отправки удобно было вводить новое сообщение
-            self.message_box.append(text)
+            self.message_box.append(new_text[1])
+            self.list_users.clear()
+            self.list_users.setText(new_text[0])
             #Передаем текст от сервера в графический интерфейс отображения сообщений клиента
 
 

@@ -23,7 +23,15 @@ def connection(soc_cl):
     while True:
         #Постоянный прием сообщений обеспечивается бесконечным циклом
         print('Начало соединения, функция connection')
-        message = soc_cl.recv(1024)
+        message = soc_cl.recv(1024).decode()
+        print(message)
+        list_message=message.split('|')
+        print(list_message)
+        list_user=[]
+        list_user.append(list_message[1])
+        print(list_user)
+        list_str = " ".join(list_user)
+        print(list_str)
         #Принимаем сообщения от клиентов
         global clients
         #Глобальная переменная для доступа к данным из функции
@@ -32,7 +40,7 @@ def connection(soc_cl):
         print('Перед циклом функция connection')
         for i in clients:
             #Перебираем ip клиентов из множества
-            i.send(message)
+            i.send((list_str+"!"+message).encode())
             #Отправка сообщения на каждого из клиентов в множестве
             print(message)
             print('Отправка после каждого сообщения')
