@@ -19,12 +19,12 @@ class Login(QtWidgets.QWidget):
 
         layout = QtWidgets.QVBoxLayout()
 
-        self.welcome_label = QtWidgets.QLabel('Добро пожаловать!')
+        self.welcome_label = QtWidgets.QLabel('Добро пожаловать в наш чат! Здесь вы можете общаться с другими пользователями в режиме реального времени.\nДля того, чтобы начать общение,войдите или зарегистрируйтесь, затем просто введите ваше сообщение в поле ввода и нажмите "Отправить".\nПрежде чем начать общение, пожалуйста, ознакомьтесь с правилами поведения в нашем чате:\nЗапрещено использование нецензурной лексики и оскорбительных выражений;\nНе размещайте ссылки на вредоносные сайты или файлы;\nУважайте права других пользователей и не нарушайте их конфиденциальность.')
         self.login_button = QtWidgets.QPushButton('Вход')
         self.register_button = QtWidgets.QPushButton('Регистрация')
 
-        # self.setMinimumSize(800, 600)
-        # self.setMaximumSize(1200, 900)
+        self.setMinimumSize(800, 600)
+        self.setMaximumSize(1200, 900)
         self.login_button.clicked.connect(self.login)
         self.register_button.clicked.connect(self.register)
 
@@ -62,7 +62,9 @@ class Login(QtWidgets.QWidget):
                     self.close()
                     break
                 else:
-                    pass #не корректный пароль или логин, должно в графическом интерфейсе должно появляться сообщение об ошибке
+                    QtWidgets.QMessageBox.warning(self, 'Ошибка входа', 'Неправильный логин или пароль')
+                    # continue
+                    #не корректный пароль или логин, должно в графическом интерфейсе должно появляться сообщение об ошибке
 
     def register(self):
         # Функция добавления (регистрации) нового аккаунта в базу данных
@@ -157,7 +159,8 @@ class ChatWindow(QtWidgets.QWidget):
         super().__init__()
 
         self.layout = QtWidgets.QVBoxLayout()
-
+        self.setMinimumSize(800, 600)
+        self.setMaximumSize(1200, 900)
         self.message_box = QtWidgets.QTextBrowser() #виджет для отображения сообщений
         self.message_box.setReadOnly(True)
         th = Thread(target=self.reciever,daemon=True)
@@ -192,6 +195,7 @@ class ChatWindow(QtWidgets.QWidget):
             #Очищаем строку ввода сообщений клиента, чтобы после отправки удобно было вводить новое сообщение
             self.message_box.append(text)
             #Передаем текст от сервера в графический интерфейс отображения сообщений клиента
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
