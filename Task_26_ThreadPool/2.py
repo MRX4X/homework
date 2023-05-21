@@ -1,5 +1,6 @@
 from queue import Queue
-from threading import Thread
+# from threading import Thread
+from concurrent.futures import ThreadPoolExecutor
 
 def delitel(que):
     while True:
@@ -21,5 +22,5 @@ my_queue.put(10)
 my_queue.put(20)
 my_queue.put(18)
 my_queue.put(228)
-threads = Thread(target=delitel, args=(my_queue,))
-threads.start()
+with ThreadPoolExecutor() as executor:
+    executor = executor.submit(delitel, my_queue)
