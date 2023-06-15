@@ -1,0 +1,6 @@
+"Как " >> answer.txt
+"же " >> answer.txt
+"я " >> answer.txt
+"устал " >> answer.txt
+"учить " >> answer.txt
+"BASH " >> answer.txt

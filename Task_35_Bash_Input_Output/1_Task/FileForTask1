@@ -1,0 +1,7 @@
+touch answer.txt
+echo "Как " >> answer.txt
+echo "же " >> answer.txt
+echo "я " >> answer.txt
+echo "устал " >> answer.txt
+echo "учить " >> answer.txt
+echo "BASH " >> answer.txt
