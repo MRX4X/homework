@@ -1,3 +1,4 @@
+#выведите отдельные слова из файла filefortask2.txt в столбик
 #!/bin/bash
 for entry in $(cat ./FileforTask)
 do
